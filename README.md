@@ -14,19 +14,21 @@ In the future, there will be an option to return a JS Promise object instead of 
 ## Examples
 
 ### Initializing a connection
-~~~~
+
+```javascript
 var rpc = new XmlRpcConnection({
-    url:     "http://<some_url>",    // URL to XML-RPC service
-    log:     true,                   // If true, logs all requests to console
-    record:  false                   // If true, records all requests and results to rpc._requests
+    url:    "http://<some_url>",    // URL to XML-RPC service
+    log:    true,                   // If true, logs all requests to console
+    record: false                   // If true, records all requests and results to rpc._requests
 });
-~~~~
+```
 All options are optional aside from the url.
 
 ### Invoking a remote method.
-~~~
+
+```javascript
 rpc.method_name('param1', 'param2', 'etc');
-~~~
+```
 All the error handling is taken care of but if you like you can catch{} it. In addition, methods that fail return undefined.
 
 
