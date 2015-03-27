@@ -29,6 +29,11 @@
  *
  * It can be used like:
  *
+ * rpc.request('method_name', ['param1', 'param2', 'etc'])
+ *
+ * Or, if your server supports introspection functions (system.listMethods),
+ * then you can just do:
+ *
  * rpc.method_name('param1', 'param2', 'etc');
  *
  * All the error handling is taken care of but if you like you can catch{} it. In addition, methods that fail return undefined.
@@ -37,25 +42,25 @@
 
 function XmlRpcConnection(params) {
 
-    this.connection = {};
-    this.connection.url       = params.url;
-    this.connection.log       = params.log    || true;
-    this.connection.record    = params.record || false;
-    this.connection.requests_performed  = new Array();
+    this._connection = {};
+    this._connection.url       = params.url;
+    this._connection.log       = params.log    || true;
+    this._connection.record    = params.record || false;
+    this._connection.requests_performed  = new Array();
 
     // Method for performing request
     this.request = function (method,params) {
 
         // Log the request
-        if (this.connection.log) {
-            console.log("["+(new Date).toLocaleString() + "] RPC Request to "+this.connection.url+" for \""+method+"("+params+")\"");
+        if (this._connection.log) {
+            console.log("["+(new Date).toLocaleString() + "] RPC Request to "+this._connection.url+" for \""+method+"("+params+")\"");
         }
         // Record the request
-        if (this.connection.record){
-            this.connection.requests_performed.push({url:this.connection.url,method:method,params:params,response:null});
+        if (this._connection.record){
+            this._connection.requests_performed.push({url:this._connection.url,method:method,params:params,response:null});
         }
     
-        var request = new XmlRpcRequest(this.connection.url, method);
+        var request = new XmlRpcRequest(this._connection.url, method);
 
         // Handle either an array of params or a single param
         if (!((typeof params).toLowerCase() == 'object' && params.constructor == Array)) {
@@ -69,8 +74,7 @@ function XmlRpcConnection(params) {
         value = response.parseXML();
         
         if (response.faultValue) {
-            alert("Oops!\nSomething went wrong on the XML-RPC server.\nCheck the error console for more details.");
-            throw "Error: "+ response.params[0].faultString;
+            throw "Something went wrong on the XML-RPC server: "+ response.params[0].faultString;
         }
         return value; // Will be undefined if there was an error
     };
